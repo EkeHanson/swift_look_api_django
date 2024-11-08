@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-48kh6q*a6*mo2b#6j3)*-8_x)t54q2yd2zs78nchnfz4dq^jyi
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['swiftlook-api-jmvy.onrender.com', '127.0.0.1', 'localhost','localhost:5173', 'arts-new-project.vercel.app']
+ALLOWED_HOSTS = ['swift-look-api-django.onrender.com', '127.0.0.1', 'localhost','localhost:5173', 'arts-new-project.vercel.app']
 
 # Application definition
 
