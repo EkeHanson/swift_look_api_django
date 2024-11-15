@@ -13,14 +13,14 @@ class UpdateLocationSerializer(serializers.Serializer):
 class UserSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields ="__all__" 
+        fields = ["phone", "first_name", "last_name", "user_type",  "is_active", "email"]
 
+ 
 
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
         fields = "__all__"
-
 
 # Serializer that includes only user fields in GET requests
 class DeviceSummarySerializer(serializers.ModelSerializer):

@@ -8,4 +8,7 @@ router.register(r'user-devices', UserDeviceViewSet, basename='user-devices')
 
 urlpatterns = [
     path('', include(router.urls)),
+    # path('api/ip-details/<str:ip_address>/', IPDetailsView.as_view(), name='ip_details'),
 ]
+
+
