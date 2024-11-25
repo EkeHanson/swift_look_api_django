@@ -136,13 +136,14 @@ WSGI_APPLICATION = 'phone_tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swiftlookdb_5xpa',  # Database name
-        'USER': 'swiftlookdb_5xpa_user',  # Database user
-        'PASSWORD': 'wud9ch75N7zo0qx9Wk1sxLR5UcgTb5XT',  # Database password
-        'HOST': 'dpg-csrmir68ii6s73b95o0g-a.oregon-postgres.render.com',  # Hostname
-        'PORT': '5432',  # Default PostgreSQL port
+        'NAME': 'swiftlookdb_c9zg',
+        'USER': 'swiftlookdb_c9zg_user',
+        'PASSWORD': 'Q0tkinZYuDMMtQZ16VtgErRaOUM6WoZY',
+        'HOST': 'dpg-ct241rpu0jms73ck8m40-a.oregon-postgres.render.com',
+        'PORT': '5432',  # Default port for PostgreSQL
     }
 }
+
 
 
 # Email settings for Hostinger
