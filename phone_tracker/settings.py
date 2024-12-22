@@ -89,6 +89,10 @@ REST_FRAMEWORK = {
     'rest_framework.renderers.JSONRenderer',
     # 'rest_framework.renderers.BrowsableAPIRenderer',  # Optional: comment this out if you only want JSON responses
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+    'django_filters.rest_framework.DjangoFilterBackend',
+    'rest_framework.filters.OrderingFilter',
+    ],
 }
 
 
@@ -136,24 +140,34 @@ WSGI_APPLICATION = 'phone_tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swiftlookdb_c9zg',
-        'USER': 'swiftlookdb_c9zg_user',
-        'PASSWORD': 'Q0tkinZYuDMMtQZ16VtgErRaOUM6WoZY',
-        'HOST': 'dpg-ct241rpu0jms73ck8m40-a.oregon-postgres.render.com',
-        'PORT': '5432',  # Default port for PostgreSQL
+        'NAME': 'swiftloo_db',  # Database name
+        'USER': 'swiftloo_db_user',  # Username
+        'PASSWORD': 'HVtlS4tvSPBEgIiftG64PWxnUkoLhDwn',  # Password
+        'HOST': 'dpg-ctjsca2j1k6c73clc4ug-a.oregon-postgres.render.com',  # Hostname
+        'PORT': '5432',  # PostgreSQL default port
     }
 }
 
 
 
 # Email settings for Hostinger
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.hostinger.com'
+# EMAIL_PORT = 465  # SSL port
+# EMAIL_USE_SSL = True  # Use SSL for secure connection
+# EMAIL_HOST_USER = 'ekenehanson@sterlingspecialisthospitals.com'  # Your Hostinger email address
+# EMAIL_HOST_PASSWORD = '123@Qwertyqwerty@123'  # Your Hostinger email password
+# DEFAULT_FROM_EMAIL = 'ekenehanson@sterlingspecialisthospitals.com'  # Default sender email
+
+
+# Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.hostinger.com'
-EMAIL_PORT = 465  # SSL port
-EMAIL_USE_SSL = True  # Use SSL for secure connection
-EMAIL_HOST_USER = 'ekenehanson@sterlingspecialisthospitals.com'  # Your Hostinger email address
-EMAIL_HOST_PASSWORD = '123@Qwertyqwerty@123'  # Your Hostinger email password
-DEFAULT_FROM_EMAIL = 'ekenehanson@sterlingspecialisthospitals.com'  # Default sender email
+EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server address
+EMAIL_PORT = 587  # Your SMTP server port (587 is the default for SMTP with TLS)
+EMAIL_USE_TLS = True  # Whether to use TLS (True by default)
+EMAIL_HOST_USER = 'ekenehanson@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'pduw cpmw dgoq adrp'  # Your email password or app-specific password if using Gmail, etc.
+DEFAULT_FROM_EMAIL = 'ekenehanson@gmail.com'  # The default email address to use for sending emails
 
 
 # Password validation

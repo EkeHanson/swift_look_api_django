@@ -16,7 +16,7 @@ class UserDeviceViewSet(viewsets.ViewSet):
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
-    queryset = Device.objects.all()
+    queryset = Device.objects.all().order_by('id') 
     serializer_class = DeviceSerializer
     permission_classes = [AllowAny]
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
