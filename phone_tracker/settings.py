@@ -151,23 +151,23 @@ DATABASES = {
 
 
 # Email settings for Hostinger
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.hostinger.com'
-# EMAIL_PORT = 465  # SSL port
-# EMAIL_USE_SSL = True  # Use SSL for secure connection
-# EMAIL_HOST_USER = 'ekenehanson@sterlingspecialisthospitals.com'  # Your Hostinger email address
-# EMAIL_HOST_PASSWORD = '123@Qwertyqwerty@123'  # Your Hostinger email password
-# DEFAULT_FROM_EMAIL = 'ekenehanson@sterlingspecialisthospitals.com'  # Default sender email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.hostinger.com'
+EMAIL_PORT = 465  # SSL port
+EMAIL_USE_SSL = True  # Use SSL for secure connection
+EMAIL_HOST_USER = 'ekenehanson@sterlingspecialisthospitals.com'  # Your Hostinger email address
+EMAIL_HOST_PASSWORD = '123@Qwertyqwerty@123'  # Your Hostinger email password
+DEFAULT_FROM_EMAIL = 'ekenehanson@sterlingspecialisthospitals.com'  # Default sender email
 
 
 # Email configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server address
-EMAIL_PORT = 587  # Your SMTP server port (587 is the default for SMTP with TLS)
-EMAIL_USE_TLS = True  # Whether to use TLS (True by default)
-EMAIL_HOST_USER = 'ekenehanson@gmail.com'  # Your email address
-EMAIL_HOST_PASSWORD = 'pduw cpmw dgoq adrp'  # Your email password or app-specific password if using Gmail, etc.
-DEFAULT_FROM_EMAIL = 'ekenehanson@gmail.com'  # The default email address to use for sending emails
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server address
+# EMAIL_PORT = 587  # Your SMTP server port (587 is the default for SMTP with TLS)
+# EMAIL_USE_TLS = True  # Whether to use TLS (True by default)
+# EMAIL_HOST_USER = 'ekenehanson@gmail.com'  # Your email address
+# EMAIL_HOST_PASSWORD = 'pduw cpmw dgoq adrp'  # Your email password or app-specific password if using Gmail, etc.
+# DEFAULT_FROM_EMAIL = 'ekenehanson@gmail.com'  # The default email address to use for sending emails
 
 
 # Password validation
