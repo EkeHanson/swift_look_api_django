@@ -4,6 +4,14 @@ from .models import Device
 from users.models import CustomUser
 
 
+class GenerateLinkSerializer(serializers.Serializer):
+    device_id = serializers.IntegerField()
+
+    def validate_device_id(self, value):
+        if not Device.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Device does not exist.")
+        return value
+
 class UpdateLocationSerializer(serializers.Serializer):
     imei = serializers.CharField(max_length=15)
     latitude = serializers.DecimalField(max_digits=9, decimal_places=6)
@@ -24,6 +32,8 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 # Serializer that includes only user fields in GET requests
 class DeviceSummarySerializer(serializers.ModelSerializer):
+
+
     user = UserSummarySerializer(read_only=True)  # This includes the user's fields from UserSummarySerializer
 
     class Meta:

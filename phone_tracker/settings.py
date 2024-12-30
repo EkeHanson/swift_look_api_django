@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+
+
     'users',
     'devices',
     'admin_dashboard',
@@ -42,6 +45,13 @@ INSTALLED_APPS = [
 
     ]
 
+ASGI_APPLICATION = 'phone_tracker.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 REST_USE_JWT = True  # If using JWT with dj-rest-auth
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Optional, based on your requirements
@@ -140,14 +150,13 @@ WSGI_APPLICATION = 'phone_tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swiftloo_db',  # Database name
-        'USER': 'swiftloo_db_user',  # Username
-        'PASSWORD': 'HVtlS4tvSPBEgIiftG64PWxnUkoLhDwn',  # Password
-        'HOST': 'dpg-ctjsca2j1k6c73clc4ug-a.oregon-postgres.render.com',  # Hostname
-        'PORT': '5432',  # PostgreSQL default port
+        'NAME': 'swiftloo_db_wj2c',  # Database name
+        'USER': 'swiftloo_db_wj2c_user',  # Database user
+        'PASSWORD': 'Ujazx5XvA9jJf76gOJhknQUn7LBbEidv',  # Database password
+        'HOST': 'dpg-ctp5gk5ds78s73cvd1bg-a.oregon-postgres.render.com',  # Host address
+        'PORT': '5432',  # Default PostgreSQL port
     }
 }
-
 
 
 # Email settings for Hostinger

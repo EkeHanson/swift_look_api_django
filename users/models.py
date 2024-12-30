@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
+import uuid
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, phone, request=None, **extra_fields):
@@ -30,6 +31,9 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser):
     phone = models.CharField(max_length=15)
+
+    unique_user_id = models.CharField(max_length=50, unique=True, default=uuid.uuid4)
+    
     first_name = models.CharField(max_length=225)
     last_name = models.CharField(max_length=225)
     user_type = models.CharField(max_length=10, choices=[('admin', 'Admin'), ('user', 'User')])
