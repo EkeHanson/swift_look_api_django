@@ -63,6 +63,12 @@ class TrackableLink(models.Model):
     browser = models.CharField(max_length=50, blank=True)
     device_type = models.CharField(max_length=50, blank=True)
 
+    geolocation = models.JSONField(null=True, blank=True)  # Store geolocation as JSON
+    os_info = models.CharField(max_length=100, blank=True)
+    screen_resolution = models.CharField(max_length=50, blank=True)
+    referrer_url = models.URLField(max_length=500, blank=True)
+    campaign_params = models.JSONField(null=True, blank=True)
+
     def __str__(self):
         return f"Trackable Link for {self.device.name}"
 
