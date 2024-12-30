@@ -50,7 +50,6 @@ class Device(models.Model):
         return self.name
 
 
-
 class TrackableLink(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     link = models.URLField(max_length=500)  # Add this field

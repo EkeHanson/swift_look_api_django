@@ -20,6 +20,16 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
 import user_agents
+import requests
+
+def get_geolocation(ip_address):
+    try:
+        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        if response.status_code == 200:
+            return response.json()  # Returns geolocation data as a dictionary
+    except Exception as e:
+        return None
+
 
 class TrackableLinkStatusView(APIView):
     """
@@ -73,6 +83,60 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
+def track_link(request, device_id):
+    """Handles tracking of link clicks."""
+    link = get_object_or_404(TrackableLink, device_id=device_id)
+    
+    # Extract user agent and IP address
+    raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
+    ip_address = get_client_ip(request)
+
+    # Parse user agent details
+    try:
+        parsed_ua = user_agents.parse(raw_user_agent)
+        browser = f"{parsed_ua.browser.family} {parsed_ua.browser.version_string}"
+        os = f"{parsed_ua.os.family} {parsed_ua.os.version_string}"
+        device_type = 'Mobile' if parsed_ua.is_mobile else 'Tablet' if parsed_ua.is_tablet else 'PC'
+    except Exception as e:
+        browser, os, device_type = "Unknown", "Unknown", "Unknown"
+
+    # Fetch geolocation data
+    geolocation_data = get_geolocation(ip_address)
+
+    # Update tracking details
+    link.is_clicked = True
+    link.clicked_at = now()
+    link.ip_address = ip_address
+    link.user_agent = raw_user_agent
+    link.browser = browser
+    link.device_type = device_type
+    link.language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+    link.geolocation = geolocation_data
+
+    link.save()
+
+    # Send WebSocket notification (if WebSocket is configured)
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "device_notifications",  # Channel group name
+        {
+            "type": "link_clicked",
+            "message": f"Link for device {link.device.name} clicked.",
+            "data": {
+                "device": link.device.name,
+                "clicked_at": str(link.clicked_at),
+                "ip_address": link.ip_address,
+                "browser": browser,
+                "os": os,
+                "device_type": device_type,
+                "geolocation": geolocation_data,
+            },
+        }
+    )
+
+    return HttpResponse("Link clicked successfully.")
+
+
 # def track_link(request, device_id):
 #     """Handles tracking of link clicks."""
 #     link = get_object_or_404(TrackableLink, device_id=device_id)
@@ -102,50 +166,50 @@ def get_client_ip(request):
 
 
 
-def track_link(request, device_id):
-    """Handles tracking of link clicks."""
-    link = get_object_or_404(TrackableLink, device_id=device_id)
+# def track_link(request, device_id):
+#     """Handles tracking of link clicks."""
+#     link = get_object_or_404(TrackableLink, device_id=device_id)
     
-    # Extract user agent and IP address
-    raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
-    ip_address = get_client_ip(request)
+#     # Extract user agent and IP address
+#     raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
+#     ip_address = get_client_ip(request)
 
-    # Parse user agent details
-    parsed_ua = user_agents.parse(raw_user_agent)
-    browser = f"{parsed_ua.browser.family} {parsed_ua.browser.version_string}"
-    os = f"{parsed_ua.os.family} {parsed_ua.os.version_string}"
-    device_type = 'Mobile' if parsed_ua.is_mobile else 'Tablet' if parsed_ua.is_tablet else 'PC'
+#     # Parse user agent details
+#     parsed_ua = user_agents.parse(raw_user_agent)
+#     browser = f"{parsed_ua.browser.family} {parsed_ua.browser.version_string}"
+#     os = f"{parsed_ua.os.family} {parsed_ua.os.version_string}"
+#     device_type = 'Mobile' if parsed_ua.is_mobile else 'Tablet' if parsed_ua.is_tablet else 'PC'
 
-    # Update tracking details
-    link.is_clicked = True
-    link.clicked_at = now()
-    link.ip_address = ip_address
-    link.user_agent = raw_user_agent
-    link.browser = browser
-    link.device_type = device_type
-    link.language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+#     # Update tracking details
+#     link.is_clicked = True
+#     link.clicked_at = now()
+#     link.ip_address = ip_address
+#     link.user_agent = raw_user_agent
+#     link.browser = browser
+#     link.device_type = device_type
+#     link.language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
 
-    link.save()
+#     link.save()
 
-    # Send WebSocket notification (if WebSocket is configured)
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        "device_notifications",  # Channel group name
-        {
-            "type": "link_clicked",
-            "message": f"Link for device {link.device.name} clicked.",
-            "data": {
-                "device": link.device.name,
-                "clicked_at": str(link.clicked_at),
-                "ip_address": link.ip_address,
-                "browser": browser,
-                "os": os,
-                "device_type": device_type,
-            },
-        }
-    )
+#     # Send WebSocket notification (if WebSocket is configured)
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "device_notifications",  # Channel group name
+#         {
+#             "type": "link_clicked",
+#             "message": f"Link for device {link.device.name} clicked.",
+#             "data": {
+#                 "device": link.device.name,
+#                 "clicked_at": str(link.clicked_at),
+#                 "ip_address": link.ip_address,
+#                 "browser": browser,
+#                 "os": os,
+#                 "device_type": device_type,
+#             },
+#         }
+#     )
 
-    return HttpResponse("Link clicked successfully.")
+#     return HttpResponse("Link clicked successfully.")
 
 
 
