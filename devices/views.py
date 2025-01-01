@@ -87,8 +87,8 @@ def get_client_ip(request):
 
 def track_link(request, device_id):
     """Handles tracking of link clicks."""
-    link = get_object_or_404(TrackableLink, device_id='device_id')
-    
+    link = get_object_or_404(TrackableLink, device_id=device_id)  # Corrected line
+
     # Extract user agent and IP address
     raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
     ip_address = get_client_ip(request)
@@ -99,7 +99,7 @@ def track_link(request, device_id):
         browser = f"{parsed_ua.browser.family} {parsed_ua.browser.version_string}"
         os = f"{parsed_ua.os.family} {parsed_ua.os.version_string}"
         device_type = 'Mobile' if parsed_ua.is_mobile else 'Tablet' if parsed_ua.is_tablet else 'PC'
-    except Exception as e:
+    except Exception:
         browser, os, device_type = "Unknown", "Unknown", "Unknown"
 
     # Fetch geolocation data
@@ -117,10 +117,10 @@ def track_link(request, device_id):
 
     link.save()
 
-    # Send WebSocket notification (if WebSocket is configured)
+    # Send WebSocket notification (if configured)
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        "device_notifications",  # Channel group name
+        "device_notifications",
         {
             "type": "link_clicked",
             "message": f"Link for device {link.device.name} clicked.",
@@ -137,82 +137,6 @@ def track_link(request, device_id):
     )
 
     return HttpResponse("Link clicked successfully.")
-
-
-# def track_link(request, device_id):
-#     """Handles tracking of link clicks."""
-#     link = get_object_or_404(TrackableLink, device_id=device_id)
-    
-#     # Update tracking details
-#     link.is_clicked = True
-#     link.clicked_at = now()
-#     link.ip_address = get_client_ip(request)
-#     link.user_agent = request.META.get('HTTP_USER_AGENT', '')
-#     link.save()
-
-#     # Send WebSocket notification (if WebSocket is configured)
-#     channel_layer = get_channel_layer()
-#     async_to_sync(channel_layer.group_send)(
-#         "device_notifications",  # Channel group name
-#         {
-#             "type": "link_clicked",
-#             "message": f"Link for device {link.device.name} clicked.",
-#             "data": {
-#                 "device": link.device.name,
-#                 "clicked_at": str(link.clicked_at),
-#                 "ip_address": link.ip_address,
-#             },
-#         }
-#     )
-#     return HttpResponse("Link clicked successfully.")
-
-
-
-# def track_link(request, device_id):
-#     """Handles tracking of link clicks."""
-#     link = get_object_or_404(TrackableLink, device_id=device_id)
-    
-#     # Extract user agent and IP address
-#     raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
-#     ip_address = get_client_ip(request)
-
-#     # Parse user agent details
-#     parsed_ua = user_agents.parse(raw_user_agent)
-#     browser = f"{parsed_ua.browser.family} {parsed_ua.browser.version_string}"
-#     os = f"{parsed_ua.os.family} {parsed_ua.os.version_string}"
-#     device_type = 'Mobile' if parsed_ua.is_mobile else 'Tablet' if parsed_ua.is_tablet else 'PC'
-
-#     # Update tracking details
-#     link.is_clicked = True
-#     link.clicked_at = now()
-#     link.ip_address = ip_address
-#     link.user_agent = raw_user_agent
-#     link.browser = browser
-#     link.device_type = device_type
-#     link.language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
-
-#     link.save()
-
-#     # Send WebSocket notification (if WebSocket is configured)
-#     channel_layer = get_channel_layer()
-#     async_to_sync(channel_layer.group_send)(
-#         "device_notifications",  # Channel group name
-#         {
-#             "type": "link_clicked",
-#             "message": f"Link for device {link.device.name} clicked.",
-#             "data": {
-#                 "device": link.device.name,
-#                 "clicked_at": str(link.clicked_at),
-#                 "ip_address": link.ip_address,
-#                 "browser": browser,
-#                 "os": os,
-#                 "device_type": device_type,
-#             },
-#         }
-#     )
-
-#     return HttpResponse("Link clicked successfully.")
-
 
 
 class GenerateTrackableLinkView(APIView):
