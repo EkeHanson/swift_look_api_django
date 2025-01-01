@@ -30,7 +30,6 @@ def get_geolocation(ip_address):
     except Exception as e:
         return None
 
-
 class TrackableLinkStatusView(APIView):
     """
     View to check the status of a TrackableLink object.
@@ -51,8 +50,13 @@ class TrackableLinkStatusView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
+            # Access the related device object
+            device = trackable_link.device
+
             # Prepare the response data
             data = {
+                "device_name": device.name,
+                "device_id": device.id,
                 "link": trackable_link.link,
                 "is_clicked": trackable_link.is_clicked,
                 "clicked_at": trackable_link.clicked_at,
@@ -63,8 +67,6 @@ class TrackableLinkStatusView(APIView):
                 "os_info": trackable_link.os_info,
                 "geolocation": trackable_link.geolocation,
             }
-
-
 
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -85,7 +87,7 @@ def get_client_ip(request):
 
 def track_link(request, device_id):
     """Handles tracking of link clicks."""
-    link = get_object_or_404(TrackableLink, device_id=device_id)
+    link = get_object_or_404(TrackableLink, device_id='device_id')
     
     # Extract user agent and IP address
     raw_user_agent = request.META.get('HTTP_USER_AGENT', '')
