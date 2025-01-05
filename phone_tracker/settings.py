@@ -2,16 +2,15 @@ from datetime import timedelta
 from pathlib import Path
 import os
 
+IPStack_ACCESS_KEY = 'dac5d74b4ffd3852ba3d516b7802a753'
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-48kh6q*a6*mo2b#6j3)*-8_x)t54q2yd2zs78nchnfz4dq^jyi'
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

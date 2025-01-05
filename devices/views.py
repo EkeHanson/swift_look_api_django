@@ -13,22 +13,39 @@ from channels.layers import get_channel_layer
 from django.utils.timezone import now
 from .models import TrackableLink
 from rest_framework.views import APIView
-from rest_framework import status
-from django.urls import reverse
 from .models import Device, TrackableLink
 from django.core.mail import send_mail
 from django.conf import settings
-from django.http import HttpResponse
+
 import user_agents
 import requests
 
+# def get_geolocation(ip_address):
+#     try:
+#         response = requests.get(f"http://ip-api.com/json/{ip_address}")
+#         if response.status_code == 200:
+#             return response.json()  # Returns geolocation data as a dictionary
+#     except Exception as e:
+#         return None
+
+
 def get_geolocation(ip_address):
+    IPStack_ACCESS_KEY = 'dac5d74b4ffd3852ba3d516b7802a753'
+
+
     try:
-        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        response = requests.get(f"https://api.ipstack.com/{ip_address}?access_key={IPStack_ACCESS_KEY}")
         if response.status_code == 200:
-            return response.json()  # Returns geolocation data as a dictionary
+            data = response.json()
+            print("Geolocation Data:", data)
+            return data
+        
     except Exception as e:
+        print("An error occurred while fetching geolocation data:", e)
         return None
+
+
+
 
 class TrackableLinkStatusView(APIView):
     """
