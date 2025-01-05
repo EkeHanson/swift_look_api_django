@@ -145,7 +145,6 @@ WSGI_APPLICATION = 'phone_tracker.wsgi.application'
 #     }
 # }
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
