@@ -1,7 +1,8 @@
+
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.timezone import now
@@ -9,7 +10,6 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import user_agents
 from django.http import HttpResponse
-
 import requests
 from .models import Device, TrackableLink
 from .serializers import DeviceSerializer, DeviceSummarySerializer, GenerateLinkSerializer
@@ -71,22 +71,25 @@ def track_link(request, device_id):
         device.save()
 
     # Send WebSocket notification
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"device_{device_id}",
-        {
-            "type": "device_update",
-            "message": f"Device {link.device.name} location updated.",
-            "data": {
-                "device_id": device_id,
-                "name": link.device.name,
-                "latitude": geolocation_data.get('lat') if geolocation_data else None,
-                "longitude": geolocation_data.get('lon') if geolocation_data else None,
-                "city": geolocation_data.get('city') if geolocation_data else None,
-                "timestamp": str(now()),
-            },
-        }
-    )
+    try:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"device_{device_id}",
+            {
+                "type": "device_update",
+                "message": f"Device {link.device.name} location updated.",
+                "data": {
+                    "device_id": device_id,
+                    "name": link.device.name,
+                    "latitude": geolocation_data.get('lat') if geolocation_data else None,
+                    "longitude": geolocation_data.get('lon') if geolocation_data else None,
+                    "city": geolocation_data.get('city') if geolocation_data else None,
+                    "timestamp": str(now()),
+                },
+            }
+        )
+    except Exception as e:
+        print(f"WebSocket error: {str(e)}")
 
     return HttpResponse("Link clicked and tracked.")
 
@@ -119,8 +122,11 @@ class GenerateTrackableLinkView(APIView):
             trackable_link = TrackableLink.objects.create(device=device, link=unique_link)
 
         # Send email asynchronously using Celery
-        from .tasks import send_tracking_email
-        send_tracking_email.delay(recipient_email, unique_link, device.name)
+        try:
+            from .tasks import send_tracking_email
+            send_tracking_email.delay(recipient_email, unique_link, device.name)
+        except Exception as e:
+            return Response({"error": f"Failed to send email: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(
             {
@@ -149,14 +155,10 @@ class UserDeviceViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        # Fetch devices associated with the logged-in user
         user = request.user
         devices = Device.objects.filter(user=user)
         serializer = DeviceSerializer(devices, many=True)
         return Response(serializer.data)
-
-
-
 
 
 
