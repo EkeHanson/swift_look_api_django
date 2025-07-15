@@ -24,7 +24,8 @@ def get_geolocation(ip_address):
         if response.status_code == 200:
             return response.json()
         return None
-    except Exception:
+    except Exception as e:
+        print(f"Geolocation error: {str(e)}")
         return None
 
 def get_client_ip(request):
@@ -73,21 +74,24 @@ def track_link(request, device_id):
     # Send WebSocket notification
     try:
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"device_{device_id}",
-            {
-                "type": "device_update",
-                "message": f"Device {link.device.name} location updated.",
-                "data": {
-                    "device_id": device_id,
-                    "name": link.device.name,
-                    "latitude": geolocation_data.get('lat') if geolocation_data else None,
-                    "longitude": geolocation_data.get('lon') if geolocation_data else None,
-                    "city": geolocation_data.get('city') if geolocation_data else None,
-                    "timestamp": str(now()),
-                },
-            }
-        )
+        if channel_layer:
+            async_to_sync(channel_layer.group_send)(
+                f"device_{device_id}",
+                {
+                    "type": "device_update",
+                    "message": f"Device {link.device.name} location updated.",
+                    "data": {
+                        "device_id": device_id,
+                        "name": link.device.name,
+                        "latitude": geolocation_data.get('lat') if geolocation_data else None,
+                        "longitude": geolocation_data.get('lon') if geolocation_data else None,
+                        "city": geolocation_data.get('city') if geolocation_data else None,
+                        "timestamp": str(now()),
+                    },
+                }
+            )
+        else:
+            print("Channel layer not available")
     except Exception as e:
         print(f"WebSocket error: {str(e)}")
 
@@ -159,7 +163,6 @@ class UserDeviceViewSet(viewsets.ViewSet):
         devices = Device.objects.filter(user=user)
         serializer = DeviceSerializer(devices, many=True)
         return Response(serializer.data)
-
 
 
 
