@@ -2,7 +2,7 @@ from django.db import models
 from users.models import CustomUser
 
 class Device(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='devices')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='admin_dashboard_devices')
     device_name = models.CharField(max_length=255)
     imei_number = models.CharField(max_length=20, unique=True)
     registered_at = models.DateTimeField(auto_now_add=True)

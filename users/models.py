@@ -23,11 +23,14 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
+    
     def create_superuser(self, email, password, request=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('user_type', 'admin')
-        return self.create_user(email, password, phone=None, request=request, **extra_fields)
+
+        return self.create_user(email, password, request=request, **extra_fields)
+
 
 class CustomUser(AbstractBaseUser):
     phone = models.CharField(max_length=15)
